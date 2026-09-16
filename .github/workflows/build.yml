@@ -1,4 +1,4 @@
-name: Build Android APK via Gradle
+name: Build Paglu AI Pro APK
 
 on:
   push:
@@ -11,25 +11,29 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          node-version: 18
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew || true
+      - name: Install Cordova CLI
+        run: npm install -g cordova
 
-      - name: Build with Gradle
+      - name: Create Cordova Project & Copy UI
         run: |
-          if [ -f "gradlew" ]; then
-            ./gradlew assembleDebug
-          else
-            gradle assembleDebug
-          fi
+          cordova create myApp com.paglu.aippro PagluAIPro
+          cd myApp
+          rm -rf www/*
+          cp -r ../index.html www/
+          cordova platform add android
+
+      - name: Build Debug APK
+        run: |
+          cd myApp
+          cordova build android --debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: paglu-ai-pro-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: paglu-ai-pro-debug
+          path: myApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk
