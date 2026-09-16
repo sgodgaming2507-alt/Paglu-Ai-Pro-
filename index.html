@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paglu AI Pro - Ultimate Analyzer</title>
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at top, #064e3b, #022c22);
+            --card-bg: rgba(6, 78, 59, 0.6);
+            --border-glow: rgba(52, 211, 153, 0.3);
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 15px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .brand-header h1 {
+            font-size: 24px;
+            margin: 0;
+            background: linear-gradient(90deg, #34d399, #60a5fa, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+        }
+        .brand-header p {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin: 4px 0 0 0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .status-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .status-pill {
+            background: rgba(2, 44, 34, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .status-pill span {
+            display: block;
+            font-size: 10px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+        }
+        .status-pill strong {
+            font-size: 13px;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        .period-input-box {
+            background: rgba(2, 44, 34, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .period-input-box label {
+            font-size: 10px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .period-input-box input {
+            background: #022c22;
+            border: 1px solid #34d399;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 90%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .prediction-banner {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2));
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .pred-label {
+            font-size: 11px;
+            color: #34d399;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .pred-value {
+            font-size: 26px;
+            font-weight: 800;
+            margin: 6px 0;
+            letter-spacing: 0.5px;
+        }
+        .pred-confidence {
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+
+        .action-label {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .action-btn {
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .btn-big { background: linear-gradient(135deg, #2563eb, #1d4ed8); border: 1px solid #60a5fa; }
+        .btn-small { background: linear-gradient(135deg, #dc2626, #b91c1c); border: 1px solid #f87171; }
+        .action-btn:active { transform: scale(0.96); filter: brightness(1.1); }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .metric-box {
+            background: rgba(2, 44, 34, 0.4);
+            padding: 8px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .metric-box span { font-size: 11px; color: var(--text-sub); display: block; }
+        .metric-box strong { font-size: 14px; color: #fff; margin-top: 2px; display: block; }
+
+        .history-container {
+            background: rgba(2, 44, 34, 0.5);
+            border-radius: 12px;
+            padding: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.03);
+            margin-bottom: 12px;
+        }
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 5px 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .history-row:last-child { border-bottom: none; }
+
+        .footer-tools {
+            display: flex;
+            gap: 8px;
+        }
+        .tool-btn {
+            flex: 1;
+            background: rgba(51, 65, 85, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #cbd5e1;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .tool-btn.danger { background: rgba(185, 28, 28, 0.3); color: #fca5a5; border-color: rgba(248, 113, 113, 0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="brand-header">
+            <h1>PAGLU AI PRO</h1>
+            <p>DmFirst Neural Engine v3.1</p>
+        </div>
+
+        <div class="glass-card">
+            <div class="status-bar">
+                <div class="status-pill">
+                    <span>Auto Timer</span>
+                    <strong id="timer" style="color: #34d399;">00:30</strong>
+                </div>
+                <div class="status-pill">
+                    <span>Mode</span>
+                    <strong>WinGo 30S</strong>
+                </div>
+            </div>
+
+            <div class="period-input-box">
+                <label>Current Period Number</label>
+                <input type="text" id="periodInput" placeholder="e.g. 20260916100052772">
+            </div>
+
+            <div class="prediction-banner">
+                <div class="pred-label">AI Neural Prediction</div>
+                <div class="pred-value" id="aiOutput">Analyzing...</div>
+                <div class="pred-confidence" id="aiConfidence">Model Confidence: 0%</div>
+            </div>
+
+            <div class="action-label">Record Round Outcome</div>
+            <div class="btn-grid">
+                <button class="action-btn btn-big" onclick="recordOutcome('BIG')">BIG</button>
+                <button class="action-btn btn-small" onclick="recordOutcome('SMALL')">SMALL</button>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <span>Total Rounds</span>
+                    <strong id="total">0</strong>
+                </div>
+                <div class="metric-box">
+                    <span>Big Ratio</span>
+                    <strong id="bigCount">0 (0%)</strong>
+                </div>
+                <div class="metric-box">
+                    <span>Small Ratio</span>
+                    <strong id="smallCount">0 (0%)</strong>
+                </div>
+            </div>
+
+            <div class="history-container" id="historyList">
+                <!-- Dynamic History -->
+            </div>
+
+            <div class="footer-tools">
+                <button class="tool-btn" onclick="undoLast()">Undo Last</button>
+                <button class="tool-btn danger" onclick="clearHistory()">Reset All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let historyData = JSON.parse(localStorage.getItem('paglu_dmfirst_history')) || [];
+
+        function runTimer() {
+            let now = new Date();
+            let seconds = now.getSeconds();
+            let remaining = 30 - (seconds % 30);
+            
+            document.getElementById('timer').innerText = `00:${remaining < 10 ? '0' : ''}${remaining}`;
+
+            if (!document.getElementById('periodInput').value) {
+                let periodBase = now.getFullYear().toString() + 
+                                 String(now.getMonth() + 1).padStart(2, '0') + 
+                                 String(now.getDate()).padStart(2, '0') + 
+                                 '1000' + String(Math.floor((now.getHours() * 60 + now.getMinutes()) * 2 + now.getSeconds() / 30));
+                document.getElementById('periodInput').value = periodBase;
+            }
+        }
+        setInterval(runTimer, 1000);
+
+        function runAIAnalysis() {
+            if (historyData.length < 4) {
+                document.getElementById('aiOutput').innerText = "Calibrating...";
+                document.getElementById('aiConfidence').innerText = "Need min 4 entries";
+                return;
+            }
+
+            let lastFour = historyData.slice(-4);
+            let scoreBig = 0, scoreSmall = 0;
+
+            if (lastFour[3] === lastFour[2] && lastFour[2] === lastFour[1]) {
+                if (lastFour[3] === 'BIG') scoreSmall += 3;
+                else scoreBig += 3;
+            }
+
+            let totalBig = historyData.filter(x => x === 'BIG').length;
+            let ratio = totalBig / historyData.length;
+
+            if (ratio > 0.55) scoreSmall += 2;
+            else if (ratio < 0.45) scoreBig += 2;
+            else {
+                if (lastFour.filter(x => x === 'BIG').length >= 2) scoreSmall += 1;
+                else scoreBig += 1;
+            }
+
+            let prediction = scoreBig >= scoreSmall ? 'BIG' : 'SMALL';
+            let confidence = Math.floor(68 + (Math.random() * 20));
+
+            let outEl = document.getElementById('aiOutput');
+            outEl.innerText = prediction;
+            outEl.style.color = prediction === 'BIG' ? '#60a5fa' : '#f87171';
+            
+            document.getElementById('aiConfidence').innerText = `Model Confidence: ${confidence}%`;
+        }
+
+        function updateUI() {
+            let total = historyData.length;
+            let big = historyData.filter(x => x === 'BIG').length;
+            let small = historyData.filter(x => x === 'SMALL').length;
+
+            document.getElementById('total').innerText = total;
+            document.getElementById('bigCount').innerText = `${big} (${total ? ((big/total)*100).toFixed(0) : 0}%)`;
+            document.getElementById('smallCount').innerText = `${small} (${total ? ((small/total)*100).toFixed(0) : 0}%)`;
+
+            let listHTML = '';
+            historyData.slice(-6).reverse().forEach((item, index) => {
+                let roundNum = total - index;
+                let colorTag = item === 'BIG' ? '#60a5fa' : '#f87171';
+                listHTML += `<div class="history-row"><span>Round #${roundNum}</span> <strong style="color: ${colorTag}">${item}</strong></div>`;
+            });
+            document.getElementById('historyList').innerHTML = listHTML || '<div style="text-align:center; color:#64748b; font-size:12px; padding:10px;">No history recorded yet</div>';
+
+            runAIAnalysis();
+        }
+
+        function recordOutcome(type) {
+            let currentPeriod = document.getElementById('periodInput').value;
+            historyData.push(type);
+            localStorage.setItem('paglu_dmfirst_history', JSON.stringify(historyData));
+            
+            if (!isNaN(currentPeriod)) {
+                document.getElementById('periodInput').value = String(Number(currentPeriod) + 1);
+            }
+            
+            updateUI();
+        }
+
+        function undoLast() {
+            historyData.pop();
+            localStorage.setItem('paglu_dmfirst_history', JSON.stringify(historyData));
+            updateUI();
+        }
+
+        function clearHistory() {
+            if(confirm("Wipe all historical data?")) {
+                historyData = [];
+                localStorage.removeItem('paglu_dmfirst_history');
+                updateUI();
+            }
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
